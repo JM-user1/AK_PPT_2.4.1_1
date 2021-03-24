@@ -1,7 +1,6 @@
-package testfolder.config;
+package com.jm.crud.config;
 
 import javax.servlet.Filter;
-import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
