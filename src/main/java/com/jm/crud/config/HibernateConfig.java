@@ -1,14 +1,13 @@
 package com.jm.crud.config;
 
-import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Properties;
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -16,54 +15,40 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.sql.DataSource;
-import java.util.Properties;
-
 @Configuration
-@ComponentScan(basePackages = "com.jm.crud")
 @EnableTransactionManagement
-@PropertySource(value = "classpath:db.properties")
-@EnableJpaRepositories("com.jm.crud.repository")
+@EnableJpaRepositories(basePackages = "com.jm.crud")
 public class HibernateConfig {
 
-    private Environment environment;
-
-    @Autowired
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
-    }
-
-    public HibernateConfig() {
-        super();
-    }
-
-    @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean em
-                = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(dataSource());
-        em.setPackagesToScan("com/jm/crud");
-
-        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        em.setJpaVendorAdapter(vendorAdapter);
-        em.setJpaProperties(additionalProperties());
-
-        return em;
-    }
     @Bean
     public DataSource dataSource() {
-        BasicDataSource dataSource = new BasicDataSource ();
-        dataSource.setDriverClassName(environment.getRequiredProperty("jdbc.driverClassName"));
-        dataSource.setUrl(environment.getRequiredProperty("jdbc.url"));
-        dataSource.setUsername(environment.getRequiredProperty("jdbc.username"));
-        dataSource.setPassword(environment.getRequiredProperty("jdbc.password"));
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        dataSource.setUsername("root");
+        dataSource.setPassword("root");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/my_db?serverTimezone=UTC");
+
         return dataSource;
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager() {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
+        LocalContainerEntityManagerFactoryBean entityManagerFactory
+                = new LocalContainerEntityManagerFactoryBean();
+        entityManagerFactory.setDataSource(dataSource);
+        entityManagerFactory.setPackagesToScan("com.jm.crud");
+
+        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        entityManagerFactory.setJpaVendorAdapter(vendorAdapter);
+        entityManagerFactory.setJpaProperties(additionalProperties());
+
+        return entityManagerFactory;
+    }
+
+    @Bean
+    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+        transactionManager.setEntityManagerFactory(entityManagerFactory);
 
         return transactionManager;
     }
@@ -75,8 +60,9 @@ public class HibernateConfig {
 
     Properties additionalProperties() {
         Properties properties = new Properties();
-        properties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
+        properties.setProperty("hibernate.hbm2ddl.auto", "update");
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
+        properties.setProperty("hibernate.show_sql", "true");
 
         return properties;
     }
