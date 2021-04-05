@@ -19,7 +19,7 @@
             <td th:text="${user.id}">id</td>
             <td th:text="${user.username}">username</td>
             <td th:text="${user.password}">password</td>
-            <td th:each="role :${user.roles}" th:text="role">roles</td>
+            <td th:each="role :${user.roles}" th:text="${role.name}">roles</td>
             <td>
                 <form th:method="DELETE" th:action="@{/{id}(id=${user.getId()})} ">
                     <input type="submit" value="delete"/>
