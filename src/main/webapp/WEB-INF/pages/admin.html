@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"  xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+</head>
+<body>
+    <h1>ADMIN</h1>
+
+<div>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>UserName</th>
+            <th>Password</th>
+            <th>Roles</th>
+        </tr>
+        <tr th:each="user :${allUsers}">
+            <td th:text="${user.id}">id</td>
+            <td th:text="${user.username}">username</td>
+            <td th:text="${user.password}">password</td>
+            <td th:each="role :${user.roles}" th:text="role">roles</td>
+            <td>
+                <form th:method="DELETE" th:action="@{/{id}(id=${user.getId()})} ">
+                    <input type="submit" value="delete"/>
+                </form>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <a href="/">Home</a>
+    <h4><a href="/news">News</a></h4>
+    <h4><a href="/logout">OUT</a></h4>
+</div>
+</body>
+</html>

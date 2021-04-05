@@ -4,9 +4,8 @@ import com.jm.crud.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
 
 @Controller
 public class AdminController {
@@ -19,12 +18,11 @@ public class AdminController {
         return "admin";
     }
 
-    @PostMapping("/admin")
-    public String deleteUser(@RequestParam(required = true, defaultValue = "") Long userId,
-        @RequestParam(required = true, defaultValue = "") String action, Model model){
-        if (action.equals(("delete"))){
-            userServiceImpl.deleteUser(userId);
-        }
+
+    @DeleteMapping("/{id}")
+    public String deleteUser(@PathVariable("id") Long id){
+        userServiceImpl.deleteUser(id);
         return "redirect:/admin";
     }
+
 }
