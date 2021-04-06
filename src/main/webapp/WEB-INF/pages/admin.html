@@ -2,6 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"  xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <title>Admin</title>
 </head>
 <body>
@@ -21,8 +23,13 @@
             <td th:text="${user.password}">password</td>
             <td th:each="role :${user.roles}" th:text="${role.name}">roles</td>
             <td>
-                <form th:method="DELETE" th:action="@{/{id}(id=${user.getId()})} ">
-                    <input type="submit" value="delete"/>
+                <div class="btn-group">
+                    <a th:href="@{/edit/{id}(id=${user.getId()})}" class="btn btn-primary active">
+                        <i class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></i> Edit
+                    </a>
+                </div>
+                <form th:method="DELETE" th:action="@{/{id}(id=${user.getId()})}" >
+                    <input type="submit" value="delete" class="btn btn-primary active"/>
                 </form>
             </td>
         </tr>
@@ -32,5 +39,6 @@
     <h4><a href="/news">News</a></h4>
     <h4><a href="/logout">OUT</a></h4>
 </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
 </body>
 </html>
